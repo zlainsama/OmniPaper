@@ -1,5 +1,6 @@
 package lain.mods.omnipaper.asm;
 
+import java.io.File;
 import java.util.Map;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
@@ -8,6 +9,8 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.TransformerExclusions("lain.mods.omnipaper.asm.")
 public class Plugin implements IFMLLoadingPlugin
 {
+
+    public static File modLocation;
 
     @Override
     public String getAccessTransformerClass()
@@ -34,8 +37,9 @@ public class Plugin implements IFMLLoadingPlugin
     }
 
     @Override
-    public void injectData(Map<String, Object> arg0)
+    public void injectData(Map<String, Object> data)
     {
+        modLocation = (File) data.get("coremodLocation");
     }
 
 }

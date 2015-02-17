@@ -1,22 +1,27 @@
 package lain.mods.omnipaper;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lain.mods.omnipaper.asm.Plugin;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 public class OmniPaper extends DummyModContainer
 {
@@ -111,10 +116,25 @@ public class OmniPaper extends DummyModContainer
         meta.updateUrl = "";
     }
 
-    @SubscribeEvent
-    public void init(FMLPreInitializationEvent event)
+    @Subscribe
+    public void init(FMLInitializationEvent event)
     {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
+        System.out.println(Items.paper.toString());
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, new ItemMeshDefinition()
+        {
+
+            public ModelResourceLocation getModelLocation(ItemStack stack)
+            {
+                List<String> data = getData(stack);
+                if (!data.isEmpty())
+                {
+                    return new ModelResourceLocation("bow_pulling_0", "inventory");
+                }
+                return null;
+            }
+
+        });
+        // Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
     }
 
     @Override
@@ -122,6 +142,24 @@ public class OmniPaper extends DummyModContainer
     {
         bus.register(this);
         return true;
+    }
+
+    @Override
+    public File getSource()
+    {
+        return Plugin.modLocation;
+    }
+
+    @Override
+    public Class<?> getCustomResourcePackClass()
+    {
+        return FMLFileResourcePack.class;
+    }
+
+    @Override
+    public List<String> getOwnedPackages()
+    {
+        return ImmutableList.of("lain.mods.omnipaper", "lain.mods.omnipaper.asm");
     }
 
 }
