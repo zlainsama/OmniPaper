@@ -21,21 +21,33 @@ public class OmniPaper
         @Override
         public double getDurabilityForDisplay(ItemStack stack)
         {
-            // TODO insert code to calculate durability bar
+            // TODO finalize protocol
+            List<String> data = getData(stack);
+            if (!data.isEmpty())
+            {
+                int meta = Integer.parseInt(data.get(0));
+                return meta / 10;
+            }
             return super.getDurabilityForDisplay(stack);
         }
 
         @Override
         public String getUnlocalizedName(ItemStack stack)
         {
-            // TODO insert code to transform to SPECIAL item
+            // TODO finalize protocol
+            List<String> data = getData(stack);
+            if (!data.isEmpty())
+                return super.getUnlocalizedName(stack) + ".special";
             return super.getUnlocalizedName(stack);
         }
 
         @Override
         public boolean showDurabilityBar(ItemStack stack)
         {
-            // TODO insert code to show durability bar
+            // TODO finalize protocol
+            List<String> data = getData(stack);
+            if (!data.isEmpty())
+                return true;
             return super.showDurabilityBar(stack);
         }
 
