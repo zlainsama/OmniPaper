@@ -1,61 +1,22 @@
 package lain.mods.omnipaper;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.LoadController;
+import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.ExistingSubstitutionException;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
 
-@Mod(modid = "OmniPaper", useMetadata = true)
-public class OmniPaper
+public class OmniPaper extends DummyModContainer
 {
-
-    public static class ItemOmniPaper extends Item
-    {
-
-        @Override
-        public double getDurabilityForDisplay(ItemStack stack)
-        {
-            // TODO finalize protocol
-            List<String> data = getData(stack);
-            if (!data.isEmpty())
-            {
-                int meta = Integer.parseInt(data.get(0));
-                return 1D - ((double) meta / 10D);
-            }
-            return super.getDurabilityForDisplay(stack);
-        }
-
-        @Override
-        public String getUnlocalizedName(ItemStack stack)
-        {
-            // TODO finalize protocol
-            List<String> data = getData(stack);
-            if (!data.isEmpty())
-                return super.getUnlocalizedName(stack) + ".special";
-            return super.getUnlocalizedName(stack);
-        }
-
-        @Override
-        public boolean showDurabilityBar(ItemStack stack)
-        {
-            // TODO finalize protocol
-            List<String> data = getData(stack);
-            if (!data.isEmpty())
-                return true;
-            return super.showDurabilityBar(stack);
-        }
-
-    }
 
     private static List<String> getData(ItemStack stack)
     {
@@ -87,6 +48,45 @@ public class OmniPaper
         return Collections.emptyList();
     }
 
+    public static double getDurabilityForDisplay(ItemStack stack, double result)
+    {
+        // TODO finalize protocol
+        List<String> data = getData(stack);
+        if (!data.isEmpty())
+        {
+            int meta = Integer.parseInt(data.get(0));
+            return 1D - ((double) meta / 10D);
+        }
+        return result;
+    }
+
+    public static int getMetadata(ItemStack stack, int result)
+    {
+        // TODO finalize protocol
+        List<String> data = getData(stack);
+        if (!data.isEmpty())
+            return 0;
+        return result;
+    }
+
+    public static String getUnlocalizedName(ItemStack stack, String result)
+    {
+        // TODO finalize protocol
+        List<String> data = getData(stack);
+        if (!data.isEmpty())
+            return result + ".special";
+        return result;
+    }
+
+    public static boolean showDurabilityBar(ItemStack stack, boolean result)
+    {
+        // TODO finalize protocol
+        List<String> data = getData(stack);
+        if (!data.isEmpty())
+            return true;
+        return result;
+    }
+
     private static String unhideString(String string)
     {
         return string.replace("\u00a7", "");
@@ -94,17 +94,31 @@ public class OmniPaper
 
     private static Pattern dataPattern = Pattern.compile("(\\[DATA=.*\\])");
 
-    @Mod.EventHandler
+    public OmniPaper()
+    {
+        super(new ModMetadata());
+        ModMetadata meta = getMetadata();
+        meta.modId = "OmniPaper";
+        meta.name = "OmniPaper";
+        meta.version = "1.8-v0";
+        meta.authorList = Arrays.asList("zlainsama");
+        meta.description = "";
+        meta.credits = "";
+        meta.url = "https://github.com/zlainsama/omnipaper";
+        meta.updateUrl = "";
+    }
+
+    @SubscribeEvent
     public void init(FMLPreInitializationEvent event)
     {
-        try
-        {
-            GameRegistry.addSubstitutionAlias("minecraft:paper", GameRegistry.Type.ITEM, new ItemOmniPaper().setUnlocalizedName("paper").setCreativeTab(CreativeTabs.tabMisc));
-        }
-        catch (ExistingSubstitutionException e)
-        {
-            event.getModLog().throwing(Level.FATAL, e);
-        }
+
+    }
+
+    @Override
+    public boolean registerBus(EventBus bus, LoadController controller)
+    {
+        bus.register(this);
+        return true;
     }
 
 }
