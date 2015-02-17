@@ -92,7 +92,7 @@ public class OmniPaper extends DummyModContainer
         return string.replace("\u00a7", "");
     }
 
-    private static Pattern dataPattern = Pattern.compile("(\\[DATA=.*\\])");
+    private static Pattern dataPattern = Pattern.compile("(\\[DATA=(.(?!\\[))*\\])");
 
     public OmniPaper()
     {
