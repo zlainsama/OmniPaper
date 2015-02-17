@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.DummyModContainer;
@@ -65,7 +68,7 @@ public class OmniPaper extends DummyModContainer
         // TODO finalize protocol
         List<String> data = getData(stack);
         if (!data.isEmpty())
-            return 0;
+            return 1;
         return result;
     }
 
@@ -74,7 +77,7 @@ public class OmniPaper extends DummyModContainer
         // TODO finalize protocol
         List<String> data = getData(stack);
         if (!data.isEmpty())
-            return result + ".special";
+            return "item.omnipaper";
         return result;
     }
 
@@ -111,7 +114,7 @@ public class OmniPaper extends DummyModContainer
     @SubscribeEvent
     public void init(FMLPreInitializationEvent event)
     {
-
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
     }
 
     @Override
