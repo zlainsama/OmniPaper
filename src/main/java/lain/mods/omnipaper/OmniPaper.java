@@ -8,9 +8,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.ExistingSubstitutionException;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.apache.logging.log4j.Level;
 import com.google.common.collect.Lists;
 
 @Mod(modid = "OmniPaper", useMetadata = true)
@@ -28,7 +30,7 @@ public class OmniPaper
             if (!data.isEmpty())
             {
                 int meta = Integer.parseInt(data.get(0));
-                return 1 - (meta / 10);
+                return 1D - ((double) meta / 10D);
             }
             return super.getDurabilityForDisplay(stack);
         }
@@ -95,7 +97,14 @@ public class OmniPaper
     @Mod.EventHandler
     public void init(FMLPreInitializationEvent event)
     {
-        Item.itemRegistry.register(339, new ResourceLocation("paper"), new ItemOmniPaper().setUnlocalizedName("paper").setCreativeTab(CreativeTabs.tabMisc));
+        try
+        {
+            GameRegistry.addSubstitutionAlias("minecraft:paper", GameRegistry.Type.ITEM, new ItemOmniPaper().setUnlocalizedName("paper").setCreativeTab(CreativeTabs.tabMisc));
+        }
+        catch (ExistingSubstitutionException e)
+        {
+            event.getModLog().throwing(Level.FATAL, e);
+        }
     }
 
 }
