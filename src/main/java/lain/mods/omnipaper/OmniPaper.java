@@ -1,11 +1,13 @@
 package lain.mods.omnipaper;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,7 +28,7 @@ public class OmniPaper
             if (!data.isEmpty())
             {
                 int meta = Integer.parseInt(data.get(0));
-                return meta / 10;
+                return 1 - (meta / 10);
             }
             return super.getDurabilityForDisplay(stack);
         }
@@ -55,21 +57,32 @@ public class OmniPaper
 
     private static List<String> getData(ItemStack stack)
     {
-        return getData(stack.getDisplayName());
+        NBTTagCompound tmp = stack.getTagCompound();
+        if (tmp != null && tmp.hasKey("display", 10))
+        {
+            tmp = tmp.getCompoundTag("display");
+            if (tmp.hasKey("Name", 8))
+                return getData(tmp.getString("Name"));
+        }
+        return Collections.emptyList();
     }
 
     private static List<String> getData(String string)
     {
         Matcher matcher = dataPattern.matcher(unhideString(string));
-        List<String> result = Lists.newLinkedList();
+        List<String> result = null;
         while (matcher.find())
         {
+            if (result == null)
+                result = Lists.newLinkedList();
             String data = matcher.group();
-            data.substring(6, data.length() - 1);
+            data = data.substring(6, data.length() - 1);
             if (!data.isEmpty())
                 result.add(data);
         }
-        return result;
+        if (result != null)
+            return result;
+        return Collections.emptyList();
     }
 
     private static String unhideString(String string)
