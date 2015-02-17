@@ -1,30 +1,21 @@
 package lain.mods.omnipaper;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lain.mods.omnipaper.asm.Plugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.client.FMLFileResourcePack;
-import net.minecraftforge.fml.client.FMLFolderResourcePack;
-import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.LoadController;
-import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
-public class OmniPaper extends DummyModContainer
+@Mod(modid = "OmniPaper", useMetadata = true)
+public class OmniPaper
 {
 
     private static List<String> getData(ItemStack stack)
@@ -103,39 +94,7 @@ public class OmniPaper extends DummyModContainer
 
     private static Pattern dataPattern = Pattern.compile("(\\[DATA=(.(?!\\[))*\\])");
 
-    public OmniPaper()
-    {
-        super(new ModMetadata());
-        ModMetadata meta = getMetadata();
-        meta.modId = "OmniPaper";
-        meta.name = "OmniPaper";
-        meta.version = "1.8-v0";
-        meta.authorList = Arrays.asList("zlainsama");
-        meta.description = "";
-        meta.credits = "";
-        meta.url = "https://github.com/zlainsama/omnipaper";
-        meta.updateUrl = "";
-    }
-
-    @Override
-    public Class<?> getCustomResourcePackClass()
-    {
-        return getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
-    }
-
-    @Override
-    public List<String> getOwnedPackages()
-    {
-        return ImmutableList.of("lain.mods.omnipaper", "lain.mods.omnipaper.asm");
-    }
-
-    @Override
-    public File getSource()
-    {
-        return Plugin.modLocation;
-    }
-
-    @Subscribe
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, new ItemMeshDefinition()
@@ -153,13 +112,6 @@ public class OmniPaper extends DummyModContainer
             }
 
         });
-    }
-
-    @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
-        bus.register(this);
-        return true;
     }
 
 }

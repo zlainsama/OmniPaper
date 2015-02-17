@@ -31,7 +31,8 @@ minecraft {
 jar
 {
     manifest {
-        attributes 'FMLCorePlugin': 'lain.mods.omnipaper.asm.Plugin'
+        attributes 'FMLCorePlugin': 'lain.mods.omnipaper.asm.Plugin',
+		           'FMLCorePluginContainsFMLMod': 'true'
     }
 }
 
