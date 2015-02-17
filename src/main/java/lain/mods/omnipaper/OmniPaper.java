@@ -14,6 +14,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
+import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
@@ -116,32 +117,16 @@ public class OmniPaper extends DummyModContainer
         meta.updateUrl = "";
     }
 
-    @Subscribe
-    public void init(FMLInitializationEvent event)
+    @Override
+    public Class<?> getCustomResourcePackClass()
     {
-        System.out.println(Items.paper.toString());
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, new ItemMeshDefinition()
-        {
-
-            public ModelResourceLocation getModelLocation(ItemStack stack)
-            {
-                List<String> data = getData(stack);
-                if (!data.isEmpty())
-                {
-                    return new ModelResourceLocation("bow_pulling_0", "inventory");
-                }
-                return null;
-            }
-
-        });
-        // Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
+        return getSource().isDirectory() ? FMLFolderResourcePack.class : FMLFileResourcePack.class;
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
+    public List<String> getOwnedPackages()
     {
-        bus.register(this);
-        return true;
+        return ImmutableList.of("lain.mods.omnipaper", "lain.mods.omnipaper.asm");
     }
 
     @Override
@@ -150,16 +135,31 @@ public class OmniPaper extends DummyModContainer
         return Plugin.modLocation;
     }
 
-    @Override
-    public Class<?> getCustomResourcePackClass()
+    @Subscribe
+    public void init(FMLInitializationEvent event)
     {
-        return FMLFileResourcePack.class;
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, new ItemMeshDefinition()
+        {
+
+            public ModelResourceLocation getModelLocation(ItemStack stack)
+            {
+                List<String> data = getData(stack);
+                if (!data.isEmpty())
+                {
+                    // TODO finalize protocol
+                    return new ModelResourceLocation("omnipaper:omnipaper", "inventory");
+                }
+                return null;
+            }
+
+        });
     }
 
     @Override
-    public List<String> getOwnedPackages()
+    public boolean registerBus(EventBus bus, LoadController controller)
     {
-        return ImmutableList.of("lain.mods.omnipaper", "lain.mods.omnipaper.asm");
+        bus.register(this);
+        return true;
     }
 
 }
