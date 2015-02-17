@@ -109,12 +109,12 @@ public class ASMTransformer implements IClassTransformer
 
         }
 
-        String mN001 = "showDurabilityBar"; // showDurabilityBar # this method is added by forge
-        String mD001 = "(Lnet/minecraft/item/ItemStack;)Z"; // (Lnet/minecraft/item/ItemStack;)Z
-        String mN002 = "getMetadata"; // getMetadata # this method is added by forge
-        String mD002 = "(Lnet/minecraft/item/ItemStack;)I"; // (Lnet/minecraft/item/ItemStack;)I
-        String mN003 = "getDurabilityForDisplay"; // getDurabilityForDisplay # this method is added by forge
-        String mD003 = "(Lnet/minecraft/item/ItemStack;)D"; // (Lnet/minecraft/item/ItemStack;)D
+        String mN001 = "showDurabilityBar"; // showDurabilityBar
+        String mD001 = "(Lamj;)Z"; // (Lnet/minecraft/item/ItemStack;)Z
+        String mN002 = "getMetadata"; // getMetadata
+        String mD002 = "(Lamj;)I"; // (Lnet/minecraft/item/ItemStack;)I
+        String mN003 = "getDurabilityForDisplay"; // getDurabilityForDisplay
+        String mD003 = "(Lamj;)D"; // (Lnet/minecraft/item/ItemStack;)D
         String mN004 = "e_"; // getUnlocalizedName
         String mD004 = "(Lamj;)Ljava/lang/String;"; // (Lnet/minecraft/item/ItemStack;)Ljava/lang/String;
 
