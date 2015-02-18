@@ -120,7 +120,7 @@ public class OmniPaper
     {
         Map<String, List<String>> data = getData(stack);
         if (data.containsKey("Name"))
-            return data.get("Name").get(0);
+            return "item." + data.get("Name").get(0);
         return result;
     }
 
