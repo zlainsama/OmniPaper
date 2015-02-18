@@ -109,14 +109,14 @@ public class ASMTransformer implements IClassTransformer
 
         }
 
-        String mN001 = "showDurabilityBar"; // showDurabilityBar
-        String mD001 = "(Lamj;)Z"; // (Lnet/minecraft/item/ItemStack;)Z
-        String mN002 = "getMetadata"; // getMetadata
-        String mD002 = "(Lamj;)I"; // (Lnet/minecraft/item/ItemStack;)I
-        String mN003 = "getDurabilityForDisplay"; // getDurabilityForDisplay
-        String mD003 = "(Lamj;)D"; // (Lnet/minecraft/item/ItemStack;)D
-        String mN004 = "e_"; // getUnlocalizedName
-        String mD004 = "(Lamj;)Ljava/lang/String;"; // (Lnet/minecraft/item/ItemStack;)Ljava/lang/String;
+        String mN001 = ObfHelper.newName("showDurabilityBar", "showDurabilityBar");
+        String mD001 = ObfHelper.newName("(Lamj;)Z", "(Lnet/minecraft/item/ItemStack;)Z");
+        String mN002 = ObfHelper.newName("getMetadata", "getMetadata");
+        String mD002 = ObfHelper.newName("(Lamj;)I", "(Lnet/minecraft/item/ItemStack;)I");
+        String mN003 = ObfHelper.newName("getDurabilityForDisplay", "getDurabilityForDisplay");
+        String mD003 = ObfHelper.newName("(Lamj;)D", "(Lnet/minecraft/item/ItemStack;)D");
+        String mN004 = ObfHelper.newName("e_", "getUnlocalizedName");
+        String mD004 = ObfHelper.newName("(Lamj;)Ljava/lang/String;", "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;");
 
         public transformer001(ClassVisitor cv)
         {

@@ -9,6 +9,8 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 public class Plugin implements IFMLLoadingPlugin
 {
 
+    public static boolean runtimeDeobfuscationEnabled = false;
+
     @Override
     public String getAccessTransformerClass()
     {
@@ -36,6 +38,8 @@ public class Plugin implements IFMLLoadingPlugin
     @Override
     public void injectData(Map<String, Object> data)
     {
+        if (data.containsKey("runtimeDeobfuscationEnabled"))
+            runtimeDeobfuscationEnabled = (Boolean) data.get("runtimeDeobfuscationEnabled");
     }
 
 }
