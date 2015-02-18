@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import com.google.common.collect.Lists;
@@ -142,10 +143,13 @@ public class OmniPaper
 
     private static final Map<ItemStack, Map<String, List<String>>> cachedData = new MapMaker().weakKeys().makeMap();
     private static final Pattern dataPattern = Pattern.compile("(\\[(.(?!\\[))*\\])");
+    
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
+        MinecraftForge.EVENT_BUS.register(this);
+
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.written_book, new ItemMeshDefinition()
         {
 
