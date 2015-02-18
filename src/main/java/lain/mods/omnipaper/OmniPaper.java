@@ -13,13 +13,18 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
@@ -86,64 +91,111 @@ public class OmniPaper
 
     public static double getDurabilityForDisplay(ItemStack stack, double result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("Durabiltity") && data.containsKey("MaxDurability"))
+        if (stack.getItemDamage() > 0)
         {
-            double durability = SafeParse.parseDouble(data.get("Durabiltity").get(0));
-            double maxdurability = SafeParse.parseDouble(data.get("MaxDurability").get(0));
-            return durability / maxdurability;
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("Damage") && data.containsKey("MaxDamage"))
+            {
+                double durability = SafeParse.parseDouble(data.get("Damage").get(0));
+                double maxdurability = SafeParse.parseDouble(data.get("MaxDamage").get(0));
+                return durability / maxdurability;
+            }
         }
         return result;
     }
 
     public static int getItemStackLimit(ItemStack stack, int result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("MaxStackSize"))
-            return SafeParse.parseInteger(data.get("MaxStackSize").get(0));
+        if (stack.getItemDamage() > 0)
+        {
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("MaxStackSize"))
+                return SafeParse.parseInteger(data.get("MaxStackSize").get(0));
+        }
         return result;
     }
 
     public static int getMetadata(ItemStack stack, int result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("ItemId"))
-            return SafeParse.parseInteger(data.get("ItemId").get(0));
+        if (stack.getItemDamage() > 0)
+        {
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("ItemId"))
+                return SafeParse.parseInteger(data.get("ItemId").get(0));
+        }
         return result;
     }
 
     public static String getUnlocalizedName(ItemStack stack, String result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("Name"))
-            return "item." + data.get("Name").get(0);
+        if (stack.getItemDamage() > 0)
+        {
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("Name"))
+                return "item." + data.get("Name").get(0);
+        }
         return result;
     }
 
     public static boolean hasEffect(ItemStack stack, boolean result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("HasEffect"))
-            return Boolean.parseBoolean(data.get("HasEffect").get(0));
+        if (stack.getItemDamage() > 0)
+        {
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("HasEffect"))
+                return Boolean.parseBoolean(data.get("HasEffect").get(0));
+        }
         return result;
     }
 
     public static boolean showDurabilityBar(ItemStack stack, boolean result)
     {
-        Map<String, List<String>> data = getData(stack);
-        if (data.containsKey("DoRenderDurability"))
+        if (stack.getItemDamage() > 0)
         {
-            boolean flag = Boolean.parseBoolean(data.get("DoRenderDurability").get(0));
-            if (flag && data.containsKey("Durabiltity") && SafeParse.parseDouble(data.get("Durabiltity").get(0)) <= 0D)
-                flag = false;
-            return flag;
+            Map<String, List<String>> data = getData(stack);
+            if (data.containsKey("DoRenderDurability"))
+            {
+                boolean flag = Boolean.parseBoolean(data.get("DoRenderDurability").get(0));
+                if (flag && data.containsKey("Damage") && SafeParse.parseDouble(data.get("Damage").get(0)) <= 0D)
+                    flag = false;
+                return flag;
+            }
         }
         return result;
     }
 
     private static final Map<ItemStack, Map<String, List<String>>> cachedData = new MapMaker().weakKeys().makeMap();
     private static final Pattern dataPattern = Pattern.compile("(\\[(.(?!\\[))*\\])");
-    
+
+    @SubscribeEvent
+    public void handleEvent(ItemTooltipEvent event)
+    {
+        if (event.itemStack.getItem() == Items.written_book)
+        {
+            ItemStack stack = event.itemStack;
+            if (stack.getItemDamage() > 0)
+            {
+                Map<String, List<String>> data = getData(stack);
+                event.toolTip.clear();
+                if (data.containsKey("ShowAuthor") && Boolean.parseBoolean(data.get("ShowAuthor").get(0)))
+                {
+                    String author = Strings.emptyToNull(stack.getTagCompound().getString("author"));
+                    if (author != null)
+                        event.toolTip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted("book.byAuthor", author));
+                }
+                if (data.containsKey("ShowGeneration") && Boolean.parseBoolean(data.get("ShowGeneration").get(0)))
+                {
+                    int generation = stack.getTagCompound().getInteger("generation");
+                    event.toolTip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal(new StringBuilder().append("book.generation.").append(generation).toString()));
+                }
+                if (data.containsKey("Tooltip"))
+                {
+                    for (String str : data.get("Tooltip"))
+                        event.toolTip.add(str);
+                }
+            }
+        }
+    }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
