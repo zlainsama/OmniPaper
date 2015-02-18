@@ -7,18 +7,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -202,40 +196,37 @@ public class OmniPaper
         {
 
             @Override
-            public ModelResourceLocation getModelLocation(ItemStack arg0)
+            public ModelResourceLocation getModelLocation(ItemStack stack)
             {
-                return new ModelResourceLocation("omnipaper:omnipaper", "inventory");
-            }
-
-        });
-        ModelBakery.addVariantName(Items.written_book, "written_book", "omnipaper:omnipaper");
-        ModelLoaderRegistry.registerLoader(new ICustomModelLoader()
-        {
-
-            @Override
-            public boolean accepts(ResourceLocation arg0)
-            {
-                if (arg0.getResourceDomain().equals("omnipaper"))
-                    System.out.println(arg0);
-                // TODO Auto-generated method stub
-                return false;
-            }
-
-            @Override
-            public IModel loadModel(ResourceLocation arg0)
-            {
-                // TODO Auto-generated method stub
+                System.out.println("getModelLocation");
+                if (stack.getItemDamage() > 0)
+                {
+                    System.out.println(stack.toString());
+                    Map<String, List<String>> data = getData(stack);
+                    if (data.containsKey("Model"))
+                    {
+                        String model = data.get("Model").get(0);
+                        System.out.println(model);
+                        return new ModelResourceLocation(model, "inventory");
+                    }
+                }
                 return null;
             }
 
-            @Override
-            public void onResourceManagerReload(IResourceManager arg0)
-            {
-                // TODO Auto-generated method stub
-
-            }
-
         });
+        /*
+         * ModelBakery.addVariantName(Items.written_book, "written_book", "omnipaper:omnipaper"); ModelLoaderRegistry.registerLoader(new ICustomModelLoader() {
+         * 
+         * @Override public boolean accepts(ResourceLocation arg0) { if (arg0.getResourceDomain().equals("omnipaper")) System.out.println(arg0); // TODO Auto-generated method stub return false; }
+         * 
+         * @Override public IModel loadModel(ResourceLocation arg0) { // TODO Auto-generated method stub return null; }
+         * 
+         * @Override public void onResourceManagerReload(IResourceManager arg0) { // TODO Auto-generated method stub
+         * 
+         * }
+         * 
+         * });
+         */
     }
 
 }
