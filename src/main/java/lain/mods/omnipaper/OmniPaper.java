@@ -33,7 +33,6 @@ public class OmniPaper
             return cachedData.get(stack);
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("pages", 9))
         {
-            System.out.println("checking");
             Map<String, List<String>> result = null;
             NBTTagList pages = stack.getTagCompound().getTagList("pages", 8);
             for (int i = 0; i < pages.tagCount(); i++)
@@ -43,7 +42,6 @@ public class OmniPaper
                 {
                     if (result != null)
                         result = null;
-                    System.out.println("invalid");
                     break;
                 }
                 Matcher matcher = dataPattern.matcher(page);
@@ -73,7 +71,6 @@ public class OmniPaper
                             values = Lists.newArrayList();
                             result.put(key, values);
                         }
-                        System.out.println(String.format("[%s=%s]", key, value));
                         values.add(value);
                     }
                 }
@@ -89,10 +86,8 @@ public class OmniPaper
     public static double getDurabilityForDisplay(ItemStack stack, double result)
     {
         Map<String, List<String>> data = getData(stack);
-        System.out.println("getDurabilityForDisplay1");
         if (data.containsKey("Durabiltity") && data.containsKey("MaxDurability"))
         {
-            System.out.println("getDurabilityForDisplay2");
             double durability = SafeParse.parseDouble(data.get("Durabiltity").get(0));
             double maxdurability = SafeParse.parseDouble(data.get("MaxDurability").get(0));
             return durability / maxdurability;
@@ -128,10 +123,7 @@ public class OmniPaper
     {
         Map<String, List<String>> data = getData(stack);
         if (data.containsKey("HasEffect"))
-        {
-            System.out.println(Boolean.parseBoolean(data.get("HasEffect").get(0)));
             return Boolean.parseBoolean(data.get("HasEffect").get(0));
-        }
         return result;
     }
 

@@ -9,8 +9,6 @@ public class Hooks
 
     public static double getDurabilityForDisplay(ItemEditableBook item, ItemStack stack, double result)
     {
-        System.out.println("Hooks.getDurabilityForDisplay");
-        
         return OmniPaper.getDurabilityForDisplay(stack, result);
     }
 

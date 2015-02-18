@@ -126,7 +126,7 @@ public class ASMTransformer implements IClassTransformer
                     this.visitVarInsn(Opcodes.ALOAD, 0);
                     this.visitVarInsn(Opcodes.ALOAD, 1);
                     this.visitVarInsn(Opcodes.ILOAD, 2);
-                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "lain/mods/omnipaper/asm/Hooks", "showDurabilityBar", "(Lnet/minecraft/item/ItemEditableBook;Lnet/minecraft/item/ItemStack;Z)Z", false);
+                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "lain/mods/omnipaper/asm/Hooks", "hasEffect", "(Lnet/minecraft/item/ItemEditableBook;Lnet/minecraft/item/ItemStack;Z)Z", false);
                 }
                 super.visitInsn(opcode);
             }
@@ -150,7 +150,7 @@ public class ASMTransformer implements IClassTransformer
                     this.visitVarInsn(Opcodes.ALOAD, 0);
                     this.visitVarInsn(Opcodes.ALOAD, 1);
                     this.visitVarInsn(Opcodes.ILOAD, 2);
-                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "lain/mods/omnipaper/asm/Hooks", "hasEffect", "(Lnet/minecraft/item/ItemEditableBook;Lnet/minecraft/item/ItemStack;Z)Z", false);
+                    this.visitMethodInsn(Opcodes.INVOKESTATIC, "lain/mods/omnipaper/asm/Hooks", "showDurabilityBar", "(Lnet/minecraft/item/ItemEditableBook;Lnet/minecraft/item/ItemStack;Z)Z", false);
                 }
                 super.visitInsn(opcode);
             }
