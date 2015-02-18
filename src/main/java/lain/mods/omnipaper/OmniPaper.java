@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import com.google.common.collect.Lists;
@@ -55,7 +55,7 @@ public class OmniPaper
         if (!data.isEmpty())
         {
             int meta = Integer.parseInt(data.get(0));
-            return 1D - ((double) meta / 10D);
+            return (double) meta / 10D;
         }
         return result;
     }
@@ -97,21 +97,8 @@ public class OmniPaper
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, new ItemMeshDefinition()
-        {
-
-            public ModelResourceLocation getModelLocation(ItemStack stack)
-            {
-                List<String> data = getData(stack);
-                if (!data.isEmpty())
-                {
-                    // TODO finalize protocol
-                    return new ModelResourceLocation("omnipaper:omnipaper", "inventory");
-                }
-                return null;
-            }
-
-        });
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
+        ModelLoader.addVariantName(Items.paper, "paper", "omnipaper:omnipaper");
     }
 
 }
