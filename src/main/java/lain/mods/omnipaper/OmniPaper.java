@@ -176,18 +176,14 @@ public class OmniPaper
             if (stack.getItemDamage() > 0)
             {
                 Map<String, List<String>> data = getData(stack);
-                event.toolTip.clear();
-                if (data.containsKey("ShowAuthor") && Boolean.parseBoolean(data.get("ShowAuthor").get(0)))
-                {
-                    String author = Strings.emptyToNull(stack.getTagCompound().getString("author"));
-                    if (author != null)
-                        event.toolTip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted("book.byAuthor", author));
-                }
-                if (data.containsKey("ShowGeneration") && Boolean.parseBoolean(data.get("ShowGeneration").get(0)))
-                {
-                    int generation = stack.getTagCompound().getInteger("generation");
-                    event.toolTip.add(EnumChatFormatting.GRAY + StatCollector.translateToLocal(new StringBuilder().append("book.generation.").append(generation).toString()));
-                }
+                String author = Strings.emptyToNull(stack.getTagCompound().getString("author"));
+                if (author != null)
+                    author = EnumChatFormatting.GRAY + StatCollector.translateToLocalFormatted("book.byAuthor", author);
+                String generation = EnumChatFormatting.GRAY + StatCollector.translateToLocal(new StringBuilder().append("book.generation.").append(stack.getTagCompound().getInteger("generation")).toString());
+                if (author != null && !data.containsKey("ShowAuthor") || !Boolean.parseBoolean(data.get("ShowAuthor").get(0)))
+                    event.toolTip.remove(author);
+                if (!data.containsKey("ShowGeneration") || !Boolean.parseBoolean(data.get("ShowGeneration").get(0)))
+                    event.toolTip.remove(generation);
                 if (data.containsKey("Tooltip"))
                 {
                     for (String str : data.get("Tooltip"))
