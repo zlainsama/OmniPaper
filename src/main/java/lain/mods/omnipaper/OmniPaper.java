@@ -83,7 +83,10 @@ public class OmniPaper
         // TODO finalize protocol
         List<String> data = getData(stack);
         if (!data.isEmpty())
-            return true;
+        {
+            int meta = Integer.parseInt(data.get(0));
+            return meta > 0;
+        }
         return result;
     }
 
