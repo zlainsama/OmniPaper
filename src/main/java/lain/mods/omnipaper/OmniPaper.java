@@ -2,106 +2,188 @@ package lain.mods.omnipaper;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ICustomModelLoader;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 
 @Mod(modid = "OmniPaper", useMetadata = true)
 public class OmniPaper
 {
 
-    private static List<String> getData(ItemStack stack)
+    private static Map<String, List<String>> getData(ItemStack stack)
     {
-        NBTTagCompound tmp = stack.getTagCompound();
-        if (tmp != null && tmp.hasKey("display", 10))
+        if (cachedData.containsKey(stack))
+            return cachedData.get(stack);
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("pages", 9))
         {
-            tmp = tmp.getCompoundTag("display");
-            if (tmp.hasKey("Name", 8))
-                return getData(tmp.getString("Name"));
-        }
-        return Collections.emptyList();
-    }
-
-    private static List<String> getData(String string)
-    {
-        Matcher matcher = dataPattern.matcher(unhideString(string));
-        List<String> result = null;
-        while (matcher.find())
-        {
+            Map<String, List<String>> result = null;
+            NBTTagList pages = stack.getTagCompound().getTagList("pages", 8);
+            for (int i = 0; i < pages.tagCount(); i++)
+            {
+                String page = pages.getStringTagAt(i);
+                if (page == null || page.length() > 32767)
+                {
+                    if (result != null)
+                        result = null;
+                    break;
+                }
+                Matcher matcher = dataPattern.matcher(page);
+                while (matcher.find())
+                {
+                    String data = matcher.group();
+                    data = data.substring(1, data.length() - 1);
+                    if (!data.isEmpty())
+                    {
+                        if (result == null)
+                            result = Maps.newHashMap();
+                        String key, value;
+                        int index = data.indexOf(":");
+                        if (index != -1)
+                        {
+                            key = data.substring(0, index);
+                            value = data.substring(index + 1, data.length());
+                        }
+                        else
+                        {
+                            key = null;
+                            value = data;
+                        }
+                        List<String> values = result.get(key);
+                        if (values == null)
+                        {
+                            values = Lists.newArrayList();
+                            result.put(key, values);
+                        }
+                        values.add(value);
+                    }
+                }
+            }
             if (result == null)
-                result = Lists.newLinkedList();
-            String data = matcher.group();
-            data = data.substring(6, data.length() - 1);
-            if (!data.isEmpty())
-                result.add(data);
-        }
-        if (result != null)
+                result = Collections.emptyMap();
+            cachedData.put(stack, result);
             return result;
-        return Collections.emptyList();
+        }
+        return Collections.emptyMap();
     }
 
     public static double getDurabilityForDisplay(ItemStack stack, double result)
     {
-        // TODO finalize protocol
-        List<String> data = getData(stack);
-        if (!data.isEmpty())
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("Durabiltity") && data.containsKey("MaxDurability"))
         {
-            int meta = Integer.parseInt(data.get(0));
-            return (double) meta / 10D;
+            double durability = SafeParse.parseDouble(data.get("Durabiltity").get(0));
+            double maxdurability = SafeParse.parseDouble(data.get("MaxDurability").get(0));
+            return durability / maxdurability;
         }
+        return result;
+    }
+
+    public static int getItemStackLimit(ItemStack stack, int result)
+    {
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("MaxStackSize"))
+            return SafeParse.parseInteger(data.get("MaxStackSize").get(0));
         return result;
     }
 
     public static int getMetadata(ItemStack stack, int result)
     {
-        // TODO finalize protocol
-        List<String> data = getData(stack);
-        if (!data.isEmpty())
-            return 1;
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("ItemId"))
+            return SafeParse.parseInteger(data.get("ItemId").get(0));
         return result;
     }
 
     public static String getUnlocalizedName(ItemStack stack, String result)
     {
-        // TODO finalize protocol
-        List<String> data = getData(stack);
-        if (!data.isEmpty())
-            return "item.omnipaper";
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("Name"))
+            return data.get("Name").get(0);
+        return result;
+    }
+
+    public static boolean hasEffect(ItemStack stack, boolean result)
+    {
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("hasEffect"))
+            return Boolean.parseBoolean(data.get("hasEffect").get(0));
         return result;
     }
 
     public static boolean showDurabilityBar(ItemStack stack, boolean result)
     {
-        // TODO finalize protocol
-        List<String> data = getData(stack);
-        if (!data.isEmpty())
+        Map<String, List<String>> data = getData(stack);
+        if (data.containsKey("doRenderDurability"))
         {
-            int meta = Integer.parseInt(data.get(0));
-            return meta > 0;
+            boolean flag = Boolean.parseBoolean(data.get("doRenderDurability").get(0));
+            if (flag && data.containsKey("Durabiltity") && SafeParse.parseDouble(data.get("").get(0)) <= 0)
+                flag = false;
+            return flag;
         }
         return result;
     }
 
-    private static String unhideString(String string)
-    {
-        return string.replace("\u00a7", "");
-    }
-
-    private static Pattern dataPattern = Pattern.compile("(\\[DATA=(.(?!\\[))*\\])");
+    private static final Map<ItemStack, Map<String, List<String>>> cachedData = new MapMaker().weakKeys().makeMap();
+    private static final Pattern dataPattern = Pattern.compile("(\\[(.(?!\\[))*\\])");
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.paper, 1, new ModelResourceLocation("omnipaper:omnipaper", "inventory"));
-        ModelLoader.addVariantName(Items.paper, "paper", "omnipaper:omnipaper");
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Items.written_book, new ItemMeshDefinition()
+        {
+
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack arg0)
+            {
+                return new ModelResourceLocation("omnipaper:omnipaper", "inventory");
+            }
+
+        });
+        ModelBakery.addVariantName(Items.written_book, "written_book", "omnipaper:omnipaper");
+        ModelLoaderRegistry.registerLoader(new ICustomModelLoader()
+        {
+
+            @Override
+            public boolean accepts(ResourceLocation arg0)
+            {
+                if (arg0.getResourceDomain().equals("omnipaper"))
+                    System.out.println(arg0);
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public IModel loadModel(ResourceLocation arg0)
+            {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public void onResourceManagerReload(IResourceManager arg0)
+            {
+                // TODO Auto-generated method stub
+
+            }
+
+        });
     }
 
 }

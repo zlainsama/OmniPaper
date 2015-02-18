@@ -1,39 +1,40 @@
 package lain.mods.omnipaper.asm;
 
 import lain.mods.omnipaper.OmniPaper;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemEditableBook;
 import net.minecraft.item.ItemStack;
 
 public class Hooks
 {
 
-    public static double getDurabilityForDisplay(Item item, ItemStack stack, double result)
+    public static double getDurabilityForDisplay(ItemEditableBook item, ItemStack stack, double result)
     {
-        if (item == Items.paper)
-            return OmniPaper.getDurabilityForDisplay(stack, result);
-        return result;
+        return OmniPaper.getDurabilityForDisplay(stack, result);
     }
 
-    public static int getMetadata(Item item, ItemStack stack, int result)
+    public static int getItemStackLimit(ItemEditableBook item, ItemStack stack, int result)
     {
-        if (item == Items.paper)
-            return OmniPaper.getMetadata(stack, result);
-        return result;
+        return OmniPaper.getItemStackLimit(stack, result);
     }
 
-    public static String getUnlocalizedName(Item item, ItemStack stack, String result)
+    public static int getMetadata(ItemEditableBook item, ItemStack stack, int result)
     {
-        if (item == Items.paper)
-            return OmniPaper.getUnlocalizedName(stack, result);
-        return result;
+        return OmniPaper.getMetadata(stack, result);
     }
 
-    public static boolean showDurabilityBar(Item item, ItemStack stack, boolean result)
+    public static String getUnlocalizedName(ItemEditableBook item, ItemStack stack, String result)
     {
-        if (item == Items.paper)
-            return OmniPaper.showDurabilityBar(stack, result);
-        return result;
+        return OmniPaper.getUnlocalizedName(stack, result);
+    }
+
+    public static boolean hasEffect(ItemEditableBook item, ItemStack stack, boolean result)
+    {
+        return OmniPaper.hasEffect(stack, result);
+    }
+
+    public static boolean showDurabilityBar(ItemEditableBook item, ItemStack stack, boolean result)
+    {
+        return OmniPaper.showDurabilityBar(stack, result);
     }
 
 }
