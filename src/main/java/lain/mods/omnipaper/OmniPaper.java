@@ -136,8 +136,8 @@ public class OmniPaper
         if (stack.getItemDamage() > 0)
         {
             Map<String, List<String>> data = getData(stack);
-            if (data.containsKey("HasEffect"))
-                return Boolean.parseBoolean(data.get("HasEffect").get(0));
+            if (data.containsKey("ForceEffect"))
+                return Boolean.parseBoolean(data.get("ForceEffect").get(0));
         }
         return result;
     }
