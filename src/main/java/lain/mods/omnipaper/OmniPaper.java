@@ -3,10 +3,12 @@ package lain.mods.omnipaper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
@@ -23,6 +25,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Mod(modid = "OmniPaper", useMetadata = true)
 public class OmniPaper
@@ -49,7 +52,7 @@ public class OmniPaper
                 while (matcher.find())
                 {
                     String data = matcher.group();
-                    data = data.substring(1, data.length() - 1); // .replace("\\u003d", "=")
+                    data = data.substring(1, data.length() - 1).replace("\\u003d", "=");
                     if (!data.isEmpty())
                     {
                         if (result == null)
@@ -162,6 +165,7 @@ public class OmniPaper
 
     private static final Map<ItemStack, Map<String, List<String>>> cachedData = new MapMaker().weakKeys().makeMap();
     private static final Pattern dataPattern = Pattern.compile("(\\[(.(?!\\[))*\\])");
+    private static final Set<String> addedModel = Sets.newHashSet();
 
     @SubscribeEvent
     public void handleEvent(ItemTooltipEvent event)
@@ -200,35 +204,22 @@ public class OmniPaper
             @Override
             public ModelResourceLocation getModelLocation(ItemStack stack)
             {
-                System.out.println("getModelLocation");
                 if (stack.getItemDamage() > 0)
                 {
-                    System.out.println(stack.toString());
                     Map<String, List<String>> data = getData(stack);
+                    String model = "written_book";
                     if (data.containsKey("Model"))
+                        model = data.get("Model").get(0);
+                    if (!addedModel.contains(model))
                     {
-                        String model = data.get("Model").get(0);
-                        System.out.println(model);
-                        return new ModelResourceLocation(model, "inventory");
+                        ModelBakery.addVariantName(Items.written_book, model);
+                        addedModel.add(model);
                     }
+                    return new ModelResourceLocation(model, "inventory");
                 }
                 return null;
             }
 
         });
-        /*
-         * ModelBakery.addVariantName(Items.written_book, "written_book", "omnipaper:omnipaper"); ModelLoaderRegistry.registerLoader(new ICustomModelLoader() {
-         * 
-         * @Override public boolean accepts(ResourceLocation arg0) { if (arg0.getResourceDomain().equals("omnipaper")) System.out.println(arg0); // TODO Auto-generated method stub return false; }
-         * 
-         * @Override public IModel loadModel(ResourceLocation arg0) { // TODO Auto-generated method stub return null; }
-         * 
-         * @Override public void onResourceManagerReload(IResourceManager arg0) { // TODO Auto-generated method stub
-         * 
-         * }
-         * 
-         * });
-         */
     }
-
 }
