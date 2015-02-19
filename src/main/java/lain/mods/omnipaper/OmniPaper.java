@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -138,6 +139,7 @@ public class OmniPaper
             Map<String, List<String>> data = getData(stack);
             if (data.containsKey("ForceEffect"))
                 return Boolean.parseBoolean(data.get("ForceEffect").get(0));
+            return !EnchantmentHelper.getEnchantments(stack).isEmpty();
         }
         return result;
     }
