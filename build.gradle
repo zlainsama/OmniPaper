@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.8-v0"
+version = "1.8-v1"
 group= "lain.mods.omnipaper"
 archivesBaseName = "OmniPaper"
 
