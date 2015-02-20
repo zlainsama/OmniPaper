@@ -52,7 +52,7 @@ public class OmniPaper
                 while (matcher.find())
                 {
                     String data = matcher.group();
-                    data = data.substring(1, data.length() - 1); // .replace("\\u003d", "=");
+                    data = data.substring(1, data.length() - 1).replace("\\u003d", "=");
                     if (!data.isEmpty())
                     {
                         if (result == null)
@@ -75,6 +75,7 @@ public class OmniPaper
                             values = Lists.newArrayList();
                             result.put(key, values);
                         }
+                        // System.out.println(String.format("[%s=%s]", key, value));
                         values.add(value);
                     }
                 }
