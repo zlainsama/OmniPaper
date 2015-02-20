@@ -165,7 +165,7 @@ public class OmniPaper
     }
 
     private static final Map<ItemStack, Map<String, List<String>>> cachedData = new MapMaker().weakKeys().makeMap();
-    private static final Pattern dataPattern = Pattern.compile("\\[.*?\\]");
+    private static final Pattern dataPattern = Pattern.compile("\\[.[^\\[]*?\\]");
     private static final Set<String> addedModel = Sets.newHashSet();
 
     @SubscribeEvent
