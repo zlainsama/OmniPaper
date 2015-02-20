@@ -3,7 +3,7 @@
   "modList": [{
     "modid": "OmniPaper",
     "name": "OmniPaper",
-    "description": "",
+    "description": "provides api for non-modded server to add custom items in modded-client",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "https://github.com/zlainsama/omnipaper",
